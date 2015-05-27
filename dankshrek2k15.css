@@ -1,0 +1,66 @@
+/* Work in Progress!
+/*
+    Document   : dankshrek2k15.css
+    Created on : 2015-02-25 06:22 PM
+    Author     : SuperPowerDonkey
+    Description:
+    Purpose of the stylesheet follows.
+    To change this template use Tools | Templates.
+*/
+body {
+background-color: 33CC00}
+
+#count {
+    padding: 15px;
+    color:black;
+}
+
+#dankDance{
+    position:absolute;
+    top: 175px;
+    left: 1000px;
+}
+#dankerButton{
+    position:absolute;
+    top: 79px;
+    left: 670px;
+}
+#Shrek{
+    position:absolute;
+    top: 60px;
+    left: 419px;
+    z-index: 0;
+}
+
+#dankShades{
+    position:absolute;
+    top: -100px;
+    left: 440px;
+    z-index:1;
+    width:270px;
+    height:200px;
+}
+#dankHat{
+    position:absolute;
+    top: -100px;
+    left: 460px;
+    z-index:2;
+    width: 220px;
+    height:175px;
+}
+#dankestButton{
+    position:absolute;
+    top: 79px;
+    left: 670px;
+}
+#illuminati{
+    position:absolute;
+    top: 28px;
+    left: 670px;
+}
+#dankButton{
+    position:absolute;
+    top: 79px;
+    left:670px;
+}
+}

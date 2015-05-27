@@ -1,0 +1,56 @@
+a {
+  color:#20B2AA;
+  text-decoration:none;
+  
+}
+a:hover {
+	color:#A52A2A;
+	font-weight: bold;
+	text-decoration: none;
+	font-size:30px;
+}
+
+.toolbar{
+  text-align:center;
+}
+.toolbarBox{
+    display:inline-block;
+    width:200px;
+    color:green;
+    border-style:solid;
+    background-color:darkred;
+  
+  
+  
+  
+    -webkit-transition: all 2s ease;
+    -moz-transition: all 2s ease;
+    -o-transition: all 2s ease;
+    transition: all 2s ease;
+}
+
+.toolbarBox:hover{
+  width: 400px;
+  color:#8B000;
+  border-style:solid;
+  text-align:center;
+  background-color:indigo;
+  box-shadow: 10px 10px 5px #888888;
+  
+}
+
+#skrew {
+  transform:skrew(90deg);
+}
+#scale {
+  transform:scale(1,0.5);
+}
+#rotate {
+  transform:rotate(45deg);
+}
+#translate {
+  transform:translate(10px,20x);
+}
+#rotate-skrew-scale-translate {
+  transform:skrew(30deg) scale(1.1,1.1) rotate(40deg)traslate(10px,20px);
+}
