@@ -5,6 +5,7 @@
  <link rel="stylesheet" type="text/css" href="dankshrek2k15.css">
       <link rel="stylesheet" type="text/css" href="navbar.css">
       <link rel="stylesheet" type="text/css" href="skeleton.css">
+      <link rel="stylesheet" type="text/css" href="css.css">
 
 </head>
 <body style="color:brown;font-family:Lucida Console">
@@ -49,39 +50,260 @@
                          Shrek Game
                      </a>
                 </div>
+        <div class="toolbarBox">
+            <a href="vindinium.html">
+            Vindinium Page
+            </a>
+        </div>
 </div>
-    <p>Vindinium is an Artificial Intelligence programming challenge. You have to take the control of a legendary hero using the programming language of your choice. You will fight with other AI for a predetermined number of turns and the hero with the greatest amount of gold will win.</p>
+    <p>Vindinium is an Artificial Intelligence programming challenge. You have to take the control of a legendary hero using the programming language of your choice. You will fight with other AI for a predetermined number of turns and the hero with the greatest amount of gold will win. Here's a picture of a small map with the four players.</p>
+    <img src=http://stratosprovatopoulos.com/wp-content/uploads/2014/02/Vindinium.jpg alt="vindiniumPic">
+    <p>I'll talk about how most of it works on this page.</p>
+    <pre>
+    <code>
+    var Bot = require('bot');
+var PF = require('pathfinding');
+//var bot = new Bot('upicbbc6', 'training', 'http://vindinium.org'); //Put your bot's code here and change training to Arena when you want to fight others.
+var bot = new Bot('3vkjvh9y', 'arena', 'http://52.8.116.125:9000'); //Put your bot's code here and change training to Arena when you want to fight others.
+var goDir;
+var Promise = require('bluebird');
+Bot.prototype.botBrain = function() {
+    return new Promise(function(resolve, reject) {
+        _this = bot;
+        //////* Write your bot below Here *//////
+        //////* Set `myDir` in the direction you want to go and then bot.goDir is set to myDir at the bottom *////////
+        
+        /*                                      * 
+         * This Code is global data!            *
+         *                                      */
+        
+        // Set myDir to what you want and it will set bot.goDir to that direction at the end.  Unless it is "none"
+        var myDir;
+        var myPos = [bot.yourBot.pos.x, bot.yourBot.pos.y];
+
+        
+        var enemyBots = [];
+        if(bot.yourBot.id != 1) enemyBots.push(bot.bot1);
+        if(bot.yourBot.id != 2) enemyBots.push(bot.bot2);
+        if(bot.yourBot.id != 3) enemyBots.push(bot.bot3);
+        if(bot.yourBot.id != 4) enemyBots.push(bot.bot4);
+        //This makes my bot check if a mine is his or someone else's, if it's not his he'll take it.
+        var notMyMines = [];
+        notMyMines = notMyMines.concat(bot.freeMines);
+        if(bot.yourBot.id != 1) notMyMines=notMyMines.concat(bot.bot1mines);
+        if(bot.yourBot.id != 2) notMyMines=notMyMines.concat(bot.bot2mines);
+        if(bot.yourBot.id != 3) notMyMines=notMyMines.concat(bot.bot3mines);
+        if(bot.yourBot.id != 4) notMyMines=notMyMines.concat(bot.bot4mines);
+        
+     //   var openMine = [];
+       // openMine = openMine.concat(bot.noonesMine);
+        //if(bot.yourBot.id != 1) bot.freeMines=bot.freeMines.concat(bot.bot1mines);
+    //    if(bot.yourBot.id != 2) openMine=openMine.concat(bot.bot2mines);
+      //  if(bot.yourBot.id != 3) openMine=openMine.concat(bot.bot3mines);
+        //if(bot.yourBot.id != 4) openMine=openMine.concat(bot.bot4mines);
+        /*                                      * 
+         * This Code Decides WHAT to do         *
+         *                                      */
+        var task;
+        
+        if(bot.yourBot.life < 40){
+            task = "Taverns"
+      
+        }
+        else if(lowHealthCloseTarget()){
+            task = "murderlowesthealth"
+            
+        }
+        else if(bot.freeMines >= 1){
+             task = "noonesMine"
+        }
+                 
+        else{               
+            task = "getMines";
+        }
+         //This will make the bot scan for enemy bots within 12 blocks, then attack then if they're less than 40 health. 
+        var targetIndex;
+        function lowHealthCloseTarget(){
+            for(i = 0; i < enemyBots.length; i++){
+              if(enemyBots[i].life < 50 && bot.findDistance(myPos, [enemyBots[i].pos.x, enemyBots[i].pos.y]) < 8 ){
+                  targetIndex = i;
+                  console.log("targetIndex in the function: " + targetIndex)
+                  return true 
+              }
+                    
+                
+            }
+            return false
+        }
+        
+        
+        
+        
+        /*                                      * 
+         * This Code Determines HOW to do it    *
+         *                                      */
+        
+        // This Code find the nearest tavern and sets myDir toward that direction // 
+        if(task === "Taverns") {
+            var closestTavern = bot.taverns[0];
+            for(i = 0; i < bot.taverns.length; i++){
+                if(bot.findDistance(myPos,closestTavern) > bot.findDistance(myPos, bot.taverns[i])) {
+                    closestTavern = bot.taverns[i]
+                }
+            }
+            console.log("Going to the Tavern!");
+            myDir = bot.findPath(myPos, closestTavern);
+            
+        }
+        
+        // This code is telling the bot to take other peoples mines //
+        if(task === "getMines") {
+            var closestMine = notMyMines[0];
+            for(i = 0; i < notMyMines.length; i++){
+                if(bot.findDistance(myPos, closestMine) > bot.findDistance(myPos, notMyMines[i])) {
+                    closestMine = notMyMines[i];
+                }
+            }
+            console.log("Claiming a Free Mine!");
+            myDir = bot.findPath(myPos, closestMine);
+        console.log(myPos, closestMine, myDir);
+        
+        }
+        // Calls upon the global variable targetIndex. 
+        if(task === "murderlowesthealth"){
+           var lowestHealthindex = 0;
+            console.log("targetIndex: "+targetIndex)
+            myDir = bot.findPath(myPos, [enemyBots[targetIndex].pos.x, enemyBots[targetIndex].pos.y]) 
+            // ^ sends the bot after lower health bots                                         
+              // Logs it so I can be sure it's working properly. 
+                console.log("Killing my enemies! :D")
+        }
+            // Makes the bot go for mines no one has claimed 
+        if(task === "noonesMine") {
+            var nearestMine = bot.freeMines[0];
+            for(i = 0; i <bot.freeMines.length; i++){
+                if(bot.findDistance(myPos, nearestMine) > bot.findDistance(myPos, bot.freeMines[i])) {
+                    nearestMine = bot.freeMines[i];
+                    console.log(myPos, nearestMine, myDir);
+                }
+            }
+            console.log("getting open mines! :D")
+            myDir = bot.findPath(myPos, nearestMine);
+            console.log(myPos, nearestMine, myDir);
+        }       
+                
+            
+        
+       
+        
+        /*                                                                                                                              * 
+         * This Code Sets your direction based on myDir.  If you are trying to go to a place that you can't reach, you move randomly.   *
+         * Otherwise you move in the direction set by your code.  Feel free to change this code if you want.                            */
+        if(myDir === "none") {
+            console.log("I have no clue what I'm doing!");
+            var rand = Math.floor(Math.random() * 4);
+            var dirs = ["north", "south", "east", "west"];
+            bot.goDir = dirs[rand];
+        } else {
+            bot.goDir = myDir;
+        }
+        
+        
+        
+        ///////////* DON'T REMOVE ANTYTHING BELOW THIS LINE *//////////////
+        resolve();
+    });
+}
+bot.runGame();
+    </code>
+    </pre>
+    <p>This is my whole vindinium code, everything here dictates what the bot will do in certain situations. On this page I will break down what each part does.</p>
+    <pre>
+    <code>
+        var enemyBots = [];
+        if(bot.yourBot.id != 1) enemyBots.push(bot.bot1);
+        if(bot.yourBot.id != 2) enemyBots.push(bot.bot2);
+        if(bot.yourBot.id != 3) enemyBots.push(bot.bot3);
+        if(bot.yourBot.id != 4) enemyBots.push(bot.bot4);
+
+    </code>
+    </pre>
+    <p>This code checks for what bot I am, if bot.id 1 is taken, then it will push the ID down until it finds an open bot number.</p>
+    <pre>
+    <code>
+    var notMyMines = [];
+        notMyMines = notMyMines.concat(bot.freeMines);
+        if(bot.yourBot.id != 1) notMyMines=notMyMines.concat(bot.bot1mines);
+        if(bot.yourBot.id != 2) notMyMines=notMyMines.concat(bot.bot2mines);
+        if(bot.yourBot.id != 3) notMyMines=notMyMines.concat(bot.bot3mines);
+        if(bot.yourBot.id != 4) notMyMines=notMyMines.concat(bot.bot4mines);
+    </code>
+    </pre>
+    <p>this code checks for mines and what bot they belong to. If the code detects a mine that doesn't belong to it it puts it in the global variable "notMyMines."</p>
+    <pre>
+    <code>
+    if(task === "getMines") {
+            var closestMine = notMyMines[0];
+            for(i = 0; i < notMyMines.length; i++){
+                if(bot.findDistance(myPos, closestMine) > bot.findDistance(myPos, notMyMines[i])) {
+                    closestMine = notMyMines[i];
+                }
+    }
+    </code>
+    </pre>
+    <p>My bot will find mines that don't belong to it and take them. It finds the nearest ones stored in the notMyMines variable and gets it.</p>
+    <pre>
+    <code>
+      if(bot.yourBot.life < 40){
+            task = "Taverns"        
+    </code>
+    </pre>
+    <p>this says that if my bot's health is less than 40, its task is "Taverns."</p>
+    <pre>
+    <code>
+     if(task === "Taverns") {
+            var closestTavern = bot.taverns[0];
+            for(i = 0; i < bot.taverns.length; i++){
+                if(bot.findDistance(myPos,closestTavern) > bot.findDistance(myPos, bot.taverns[i])) {
+                    closestTavern = bot.taverns[i]
+                }
+            }
+    </code>
+    </pre>
+    <p>This piece of code is only called upon if my bots health is less than 40, if it is then the piece of code above this will call upon the task "Taverns." When it does that the bot will drop what its doing and make its way to the nearest tavern.</p>
+    <pre>
+    <code>
+      else if(lowHealthCloseTarget()){
+            task = "murderlowesthealth"
+    </code>
+    </pre>
+    <p>This bit of code tells the bot to use the task "murderlowesthealth" if my bot has more than 40 health. It won't do the task if it has more than 40 health because of the else if statement, which means the bot will only call on the task if the other "Taverns" statement is false.</p>
+    <pre>
+    <code>
+      if(task === "murderlowesthealth"){
+           var lowestHealthindex = 0;
+            console.log("targetIndex: "+targetIndex)
+            myDir = bot.findPath(myPos, [enemyBots[targetIndex].pos.x, enemyBots[targetIndex].pos.y]) 
+            // ^ sends the bot after lower health bots                                         
+              // Logs it so I can be sure it's working properly. 
+                console.log("Killing my enemies! :D")
+        }
+    </code>
+    </pre>
+    <p>This chunk of code tells the whole code what the task "murderlowesthealth" is. This tells it that if a bot within 8 units of my own bot has less than 40 health, my bot will pathfind over to it and kill it. The console.log makes the code say "Murdering my enemies!" in the terminal when I run the program. This is so I can check if the code is working.</p>
     
     <pre>
     <code>
-    
-        //these functions count up the code and have different effects
-//this adds one point whenever you click//
-   var airHorn=new Audio('')
-    var counter = 0
-    function countUpByOne(){
-        counter=counter+1 * multiplier;
-        return counter
-    }  
-    var multiplier = 1
-    //this subtracts 100 points when you buy sunglasses
-    function subtractOnehundred(){
-        counter=counter-100
-        return counter
-    }
-    //this will subtract 1000 points when you buy the hat
-    function subractOneK(){
-        counter=counter-1000
-        return counter
-    }
-    function subtractTenK(){
-        counter=counter-10000
-        return counter
-    }
-    
-    
+     if(myDir === "none") {
+            console.log("I have no clue what I'm doing!");
+            var rand = Math.floor(Math.random() * 4);
+            var dirs = ["north", "south", "east", "west"];
+            bot.goDir = dirs[rand];
+        } else {
+            bot.goDir = myDir;
+        }
+        
     </code>
     </pre>
-    
-    
+    <p>This piece of code is what my bot will do if it has nothing else to do. If my bot can't find a way to get to its objective or has nothing to do it will "go random." That means the bot will go in random directions and do random things until it has a task again. The console.log "I have no clue what I'm doing!" tells the code to say that in the terminal whenever I run the code so I can easily check when my bot goes random.</p>
     </body>

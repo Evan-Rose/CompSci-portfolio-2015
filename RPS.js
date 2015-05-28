@@ -24,7 +24,7 @@ function getCompChoice() {
 var playerChoice;
  function getPlayerChoice() {
     playerChoice = dropDownMenu1.options[dropDownMenu1.selectedIndex].text;
-   //alert(playerChoice);
+   alert("The computer chose: " + computerChoice);
 }
 
 

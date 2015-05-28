@@ -13,7 +13,7 @@ document.getElementById("count").innerHTML = "Click Shrek a scrub to earn points
 //these functions count up the code and have different effects
 //this adds one point whenever you click//
    var airHorn=new Audio('')
-    var counter = 0
+    var counter = 10000000000000
     function countUpByOne(){
         counter=counter+1 * multiplier;
         return counter
@@ -31,6 +31,10 @@ document.getElementById("count").innerHTML = "Click Shrek a scrub to earn points
     }
     function subtractTenK(){
         counter=counter-10000
+        return counter
+    }
+    function subtract100K(){
+        counter=counter-100000
         return counter
     }
 
@@ -88,7 +92,7 @@ document.getElementById("count").innerHTML = "Click Shrek a scrub to earn points
     }
     });
     $('dankestButton').click(function(){
-        if(counter>=100000){
+        if(counter>=0){
    $('#illuminati').css('visibility','visible')
         }
     });
