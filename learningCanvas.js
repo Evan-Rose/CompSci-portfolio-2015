@@ -50,9 +50,9 @@ var hero = {
                 if(this.moveDown){
                     this.yPos += 5;
                 }
-            }
-        }
-    }
+            
+        
+    
     draw: function() {
         context.beginPath();
         context.arc(this.xPos, this.yPos, 10, 0, 2 * Math.PI, false);
