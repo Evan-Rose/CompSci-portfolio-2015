@@ -5,29 +5,36 @@
  * Time: 06:17 PM
  * To change this template use Tools | Templates.
  */
-    document.addEventListener("keydown", function(evt){
-        if(evt.keyCode === 87){
-            hero.moveUp = true;
-        }
-    });
-    document.addEventListener("keyup", function(evt){
-        if(evt.keyCode === 87){
-            hero.moveUp = false;
-        }
-    });
-document.addEventListener("keydown",function(evt){
-    if(evt.keyCode === 83){
+
+function start() {}
+document.addEventListener("keydown", function(evt) {
+    if(evt.keyCode == 87) {
+        hero.moveUp = true;
+    }
+    if(evt.keyCode === 83) {
         hero.moveDown = true;
     }
-});
-
-document.addEventListener("keydown",function(evt){
-    if(evt.keyCode === 83){
-        hero.moveDown = false;
+    if(evt.keyCode === 65) {
+        hero.moveLeft = true;
+    }
+    if(evt.keyCode === 68) {
+        hero.moveRight = true;
     }
 });
-
-
+document.addEventListener("keyup", function(evt) {
+    if(evt.keyCode === 87) {
+        hero.moveUp = false;
+    }
+    if(evt.keyCode == 83) {
+        hero.moveDown = false;
+    }
+    if(evt.keyCode === 65) {
+        hero.moveLeft = false;
+    }
+    if(evt.keyCode === 68) {
+        hero.moveRight = false;
+    }
+});
 var c = document.getElementById("myCanvas");
 var context = c.getContext("2d");
 // context.fillStyle = "#FF0000";
@@ -35,24 +42,24 @@ var context = c.getContext("2d");
 var hero = {
     moveUp: false,
     moveDown: false,
+    moveLeft: false,
+    moveRight: false,
     xPos: 10,
     yPos: 20,
-    move: function(){
-        if(this.moveUp){
+    move: function() {
+        if(this.moveUp) {
             this.yPos -= 5;
         }
-        var hero = {
-            moveDown: false,
-            moveUp: false,
-            xPos: 10,
-            yPos: 20,
-            move: function(){
-                if(this.moveDown){
-                    this.yPos += 5;
-                }
-            
-        
-    
+        if(this.moveDown) {
+            this.yPos += 5;
+        }
+        if(this.moveLeft) {
+            this.xPos -= 5;
+        }
+        if(this.moveRight) {
+            this.xPos += 5;
+        }
+    },
     draw: function() {
         context.beginPath();
         context.arc(this.xPos, this.yPos, 10, 0, 2 * Math.PI, false);
@@ -64,13 +71,14 @@ var hero = {
     }
 }
 
-
-
-function gameLoop(){
-    hero.move();
-    hero.draw();
-    
-    
-    window.requestAnimationFrame(gameLoop);
-}
+    function gameLoop() {
+        hero.move();
+        refresh();
+        window.requestAnimationFrame(gameLoop);
+    }
 gameLoop();
+
+function refresh() {
+    context.clearRect(0, 0, c.width, c.height);
+    hero.draw();
+}

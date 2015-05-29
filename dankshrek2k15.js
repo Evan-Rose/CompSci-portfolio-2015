@@ -13,7 +13,7 @@ document.getElementById("count").innerHTML = "Click Shrek a scrub to earn points
 //these functions count up the code and have different effects
 //this adds one point whenever you click//
    var airHorn=new Audio('')
-    var counter = 10000000000000
+    var counter = 0
     function countUpByOne(){
         counter=counter+1 * multiplier;
         return counter
